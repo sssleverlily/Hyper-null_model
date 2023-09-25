@@ -28,8 +28,6 @@ def edge_translate_random(edge_1, edge_2):
         edge_all.remove(edge)  # [1]
     # edge_1 edge_2 ,edge_all是多的元素
 
-    # for extra_edges in edge_all:
-    #     edges_set.remove(extra_edges)  # [2,3,4]
     extra_length = len(edge_all)
     can_repeat = True
     # 这时候的edges_set就是没有重复的元素
@@ -37,9 +35,6 @@ def edge_translate_random(edge_1, edge_2):
     edge_1_new = []
     edge_2_new = []
 
-    # for edge in edge_all:  # 放两遍
-    #     edge_1_new.append(edge)
-    #     edge_2_new.append(edge)
     repeat_times = 0
     for extra_node in edges_set:
         if can_repeat:
@@ -357,76 +352,3 @@ def twok_nullmodel(graph, is_half=False):
             entropy_list.append(calculate_entropy(G_1))
     print(swapcount)
     return incidence_dic, entropy_list
-
-
-'''
-计算超度分布
-
-node_hyperdegree - node num
-'''
-
-
-def degree_distribution(incidence_dic, index=1):
-    if index == 0:
-        graph = incidence_dic
-    else:
-        graph = hnx.Hypergraph(incidence_dic)
-    node_degree_list = []
-    for node in graph:
-        node_degree_list.append(graph.degree(node))
-    degree_set = set(node_degree_list)
-    node_degree_distribution = {}
-    node_degree_distribution_list = []  # 度分布的list 版本
-    node_num = 0
-    node_sum = 0
-    for node_degree in degree_set:
-        node_degree_distribution[node_degree] = node_degree_list.count(node_degree)
-        node_degree_distribution_list.append(node_degree_list.count(node_degree))
-        node_num = node_num + node_degree_list.count(node_degree)
-        node_sum = node_sum + node_sum * node_degree_list.count(node_degree)
-    # 看一下总的度数
-    # print(node_degree_distribution)
-    print(node_num)
-    print(node_sum)
-
-    return node_degree_distribution, node_degree_distribution_list
-
-
-'''
-超边度分布
-超边度:len(edge)
-'''
-
-
-def hyperedge_degree_distribution(incidence_dic: dict):
-    graph = hnx.Hypergraph(incidence_dic)
-    edge_degree_list = []
-    for i in range(len(graph.edges)):
-        edge = graph.edges.incidence_dict[i]
-        edge_degree_list.append(len(edge))
-    degree_set = set(edge_degree_list)
-    edge_degree_distribution = {}
-    for edge_degree in degree_set:
-        edge_degree_distribution[edge_degree] = edge_degree_list.count(edge_degree)
-    #
-    print(edge_degree_distribution)
-    return edge_degree_distribution
-
-
-'''
-网络的聚类系数
-节点的聚类系数的平均值
-'''
-
-
-def net_clustering_coefficient(hg: hnx.Hypergraph):
-    matrix = hg.incidence_matrix().todense()
-    node_num = matrix.shape[0]
-    node_clustering = 0
-    for i in range(node_num):
-        # 还要重写
-        node_clustering = node_clustering + micro_statistics.node_clustering_coefficient(hg, i)
-        print(node_clustering)
-    net_clustering = node_clustering / node_num
-
-    return net_clustering
